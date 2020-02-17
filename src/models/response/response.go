@@ -59,4 +59,44 @@ type (
 			} `json:"001"`
 		} `json:"balance"`
 	}
+
+	RespBudget struct {
+		Budget struct {
+			Amount   int `json:"amount"`
+			Spending int `json:"spending"`
+		} `json:"budget"`
+		TotalSpending int `json:"totalSpending"`
+		CycleDate     int `json:"cycleDate"`
+		Summary       []struct {
+			Amount     int `json:"amount"`
+			CategoryID int `json:"categoryId"`
+			Spending   int `json:"spending"`
+		} `json:"summary"`
+	}
+
+	RespNotifications struct {
+		Notifications []struct {
+			ID          string      `json:"id"`
+			ChannelType string      `json:"channelType"`
+			MessageType string      `json:"messageType"`
+			Subject     interface{} `json:"subject"`
+			Message     string      `json:"message"`
+			DateCreated string      `json:"dateCreated"`
+			Status      string      `json:"status"`
+			Receiver    struct {
+				ID   string `json:"id"`
+				Type string `json:"type"`
+			} `json:"receiver"`
+		} `json:"notifications"`
+	}
+
+	RefBank struct {
+		BankTypes []struct {
+			ID        int    `json:"id"`
+			Name      string `json:"name"`
+			Isdefault int    `json:"isdefault"`
+			Value     string `json:"value"`
+		} `json:"bankTypes"`
+		BankTypeDefault interface{} `json:"bankTypeDefault"`
+	}
 )
