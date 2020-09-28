@@ -1,4 +1,4 @@
-package response
+package models
 
 type (
 	Login2FA struct {
@@ -100,3 +100,7 @@ type (
 		BankTypeDefault interface{} `json:"bankTypeDefault"`
 	}
 )
+
+func (e *ErrorResp) Error() string {
+	return ""
+}

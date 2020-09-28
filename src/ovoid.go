@@ -6,7 +6,7 @@ import (
 	"log"
 	"ovoid/src/config"
 	ovo "ovoid/src/helpers/http"
-	"ovoid/src/models/response"
+	"ovoid/src/models"
 	"time"
 
 	"github.com/google/uuid"
@@ -35,33 +35,15 @@ type (
 )
 
 func main() {
-	ovoid := OVOID{
-		AuthToken: `eyJhbGciOiJSUzI1NiJ9.eyJleHBpcnlJbk1pbGxpU2Vjb25kcyI6NjA0ODAwMDAwLCJjcmVhdGVUaW1lIjoxNTgxOTA3NzczNzkzLCJzZWNyZXQiOiJVaUhBN0ExSnA2czhLblBvNWY1OStMUWVnTTE1QTRiNTFWVVY1WE1tSW5rQ0xwTWtkc0tzTUFYTmtWTnhXN0VxWmRJR0RVYmJQMHJva3dScHFyWDRGYW4yV1FKV0Q5OVJRdGRBQUhDNGptRTdBNzI0WVRIdVJsQnRjeHlVdFpkODlPU2hVaGFSMS9ZdjQrdjZJdXU5VENXMVR1Nnc2MTN3NUI2d0hYaFQ0cXYyU2d3bDdxMHJFcVVpRWVpejYxZGFTUG9nOTFrVVJsWG5zZmZQYmdhRmxEQktKdU1PaXpDNStQcFh4OGFYalFGUnFvcndYRkZrQis0VHBBRmtHeG9kempuMGt6VlF6ekJrMDFDRkNHeVh3ZUxGVnFPSkxLVXZuRkRLeTNNVHkyMDJ2MDBWWmFYV2owZkdEdzZhYWRhMFBMU3ptVG5jeTM3NlBwK0RTUWROTmZLVVRmd3hGV0lFbk9BeFIzMVEwY3M9In0.Vwd1fnZL6meqlfRuTSY_m0koE_8mdC5QGBjLViVOKrS0wJy4gtkD1m0AsZAME7ndOu320K1rUQQcFAvHJqd0gR42SwgTD4h5xr51Ckq8L0YIrEXOtuLll6dvnMireGQIThW38sCNxmTIdVMuvE4lIAVOv3dTrcj813xnmNDVrri-Kst7OYxDUZVq6HFi_z-B6uTiOUcZeYlhV2p272WZ8CnXQ_xxWa1vOyjr4eLpN2Y5QORmW9DViM72LAU-Auo2a3DrEZ00-2y2kYfM8Y2THfubW7owL1fZfRPr4syiPR8qPtv0cOjbXKGjpG0GEernwwkLMhtoN2HG8LmS8ep-Mg`,
-	}
-	resp, respErr, err := ovoid.GetRefBank()
-	if err != nil {
-		panic(err)
-	}
-	log.Print(respErr)
-	log.Print(resp)
-	jsonResp, err := json.Marshal(resp)
-	log.Print(string(jsonResp))
 
-	//login := Login{Mobile: "081217179281"}
-	// refId, _, _ := login.Login2FA()
-	// log.Print(refId.RefID)
-	//login.RefID = "0b1b7d9d66b747ebba734df5bfc7c837"
-	//login.VerificationCode = "5653"
-	//res, _, _ := login.Login2FAVerify()
-	//log.Print(res)
-	// login.UpdateAccessToken = "2b7c6a0187a14b6aa8a5398c56628b8a"
-	// login.SecurityCode = "191613"
-	// res, _, _ := login.LoginSecurityCode()
-	// log.Print(res)
+	ovoAccount := OVOID{}
 
+	balance, _ := ovoAccount.GetAllBalance()
+	fmt.Printf("%+v", balance)
 }
 
-func (l *Login) Login2FA() (*response.Login2FA, *response.ErrorResp, error) {
+//Login2FA login using phone number to OVO
+func (l *Login) Login2FA() (*models.Login2FA, error) {
 	l.DeviceID = uuid.New().String()
 	req := &ovo.Request{
 		Method: "POST",
@@ -70,28 +52,21 @@ func (l *Login) Login2FA() (*response.Login2FA, *response.ErrorResp, error) {
 		Body:   l,
 	}
 	resp, err := ovo.Post(req)
-	if err != nil || resp.StatusCode != 200 {
-		var responseError = new(response.ErrorResp)
-		json.NewDecoder(resp.Body).Decode(responseError)
-		defer resp.Body.Close()
-		return nil, responseError, err
+	defer resp.Body.Close()
+	if err != nil {
+		return nil, err
 	}
-	var result = new(response.Login2FA)
+	var result = new(models.Login2FA)
 	err = json.NewDecoder(resp.Body).Decode(result)
 	if err != nil {
 		fmt.Println(err)
-		var responseError = new(response.ErrorResp)
-		json.NewDecoder(resp.Body).Decode(responseError)
-		defer resp.Body.Close()
-		return nil, responseError, err
+		return nil, err
 	}
-	defer resp.Body.Close()
-	return result, nil, nil
-
+	return result, nil
 }
 
-func (l *Login) Login2FAVerify() (*response.AccessToken, *response.ErrorResp, error) {
-
+//Login2FAVerify is verify OTP sent to phonenumber
+func (l *Login) Login2FAVerify() (*models.AccessToken, error) {
 	l = &Login{
 		Mobile:             l.Mobile,
 		RefID:              l.RefID,
@@ -112,26 +87,21 @@ func (l *Login) Login2FAVerify() (*response.AccessToken, *response.ErrorResp, er
 		Body:   l,
 	}
 	resp, err := ovo.Post(req)
-	if err != nil || resp.StatusCode != 200 {
-		var responseError = new(response.ErrorResp)
-		json.NewDecoder(resp.Body).Decode(responseError)
-		defer resp.Body.Close()
-		return nil, responseError, err
+	defer resp.Body.Close()
+	if err != nil {
+		return nil, err
 	}
-	var result = new(response.AccessToken)
+	var result = new(models.AccessToken)
 	err = json.NewDecoder(resp.Body).Decode(result)
 	if err != nil {
 		fmt.Println(err)
-		var responseError = new(response.ErrorResp)
-		json.NewDecoder(resp.Body).Decode(responseError)
-		defer resp.Body.Close()
-		return nil, responseError, err
+		return nil, err
 	}
-	defer resp.Body.Close()
-	return result, nil, nil
+	return result, nil
 }
 
-func (l *Login) LoginSecurityCode() (*response.Auth, *response.ErrorResp, error) {
+//LoginSecurityCode verify login from security pin code and updated access Token
+func (l *Login) LoginSecurityCode() (*models.Auth, error) {
 	l = &Login{
 		DeviceUnixtime:    time.Now().Unix(),
 		SecurityCode:      l.SecurityCode,
@@ -146,26 +116,21 @@ func (l *Login) LoginSecurityCode() (*response.Auth, *response.ErrorResp, error)
 		Body:   l,
 	}
 	resp, err := ovo.Post(req)
-	if err != nil || resp.StatusCode != 200 {
-		var responseError = new(response.ErrorResp)
-		json.NewDecoder(resp.Body).Decode(responseError)
-		defer resp.Body.Close()
-		return nil, responseError, err
+	if err != nil {
+		return nil, err
 	}
-	var result = new(response.Auth)
+	var result = new(models.Auth)
 	err = json.NewDecoder(resp.Body).Decode(result)
 	if err != nil {
 		fmt.Println(err)
-		var responseError = new(response.ErrorResp)
-		json.NewDecoder(resp.Body).Decode(responseError)
-		defer resp.Body.Close()
-		return nil, responseError, err
+		return nil, err
 	}
 	defer resp.Body.Close()
-	return result, nil, nil
+	return result, nil
 }
 
-func (o *OVOID) GetAllBalance() (*response.RespBalance, *response.ErrorResp, error) {
+//GetAllBalance gets all balance in account
+func (o *OVOID) GetAllBalance() (*models.RespBalance, error) {
 	req := &ovo.Request{
 		Method:        "GET",
 		Host:          config.BASE_ENDPOINT,
@@ -173,26 +138,21 @@ func (o *OVOID) GetAllBalance() (*response.RespBalance, *response.ErrorResp, err
 		Authorization: o.AuthToken,
 	}
 	resp, err := ovo.Post(req)
-	if err != nil || resp.StatusCode != 200 {
-		var responseError = new(response.ErrorResp)
-		json.NewDecoder(resp.Body).Decode(responseError)
-		defer resp.Body.Close()
-		return nil, responseError, err
+	if err != nil {
+		return nil, err
 	}
-	var result = new(response.RespBalance)
+	var result = new(models.RespBalance)
 	err = json.NewDecoder(resp.Body).Decode(result)
 	if err != nil {
 		fmt.Println(err)
-		var responseError = new(response.ErrorResp)
-		json.NewDecoder(resp.Body).Decode(responseError)
-		defer resp.Body.Close()
-		return nil, responseError, err
+		return nil, err
 	}
 	defer resp.Body.Close()
-	return result, nil, nil
+	return result, nil
 }
 
-func (o *OVOID) GetBudget() (*response.RespBudget, *response.ErrorResp, error) {
+//GetBudget gets all budget in account
+func (o *OVOID) GetBudget() (*models.RespBudget, error) {
 	req := &ovo.Request{
 		Method:        "GET",
 		Host:          config.BASE_ENDPOINT,
@@ -200,26 +160,21 @@ func (o *OVOID) GetBudget() (*response.RespBudget, *response.ErrorResp, error) {
 		Authorization: o.AuthToken,
 	}
 	resp, err := ovo.Post(req)
-	if err != nil || resp.StatusCode != 200 {
-		var responseError = new(response.ErrorResp)
-		json.NewDecoder(resp.Body).Decode(responseError)
-		defer resp.Body.Close()
-		return nil, responseError, err
+	if err != nil {
+		return nil, err
 	}
-	var result = new(response.RespBudget)
+	var result = new(models.RespBudget)
 	err = json.NewDecoder(resp.Body).Decode(result)
 	if err != nil {
 		fmt.Println(err)
-		var responseError = new(response.ErrorResp)
-		json.NewDecoder(resp.Body).Decode(responseError)
-		defer resp.Body.Close()
-		return nil, responseError, err
+		return nil, err
 	}
 	defer resp.Body.Close()
-	return result, nil, nil
+	return result, nil
 }
 
-func (o *OVOID) GetUnreadHistory() (map[string]int, *response.ErrorResp, error) {
+//GetUnreadHistory get notification that unread
+func (o *OVOID) GetUnreadHistory() (map[string]int, error) {
 	req := &ovo.Request{
 		Method:        "GET",
 		Host:          config.BASE_ENDPOINT,
@@ -227,26 +182,21 @@ func (o *OVOID) GetUnreadHistory() (map[string]int, *response.ErrorResp, error) 
 		Authorization: o.AuthToken,
 	}
 	resp, err := ovo.Post(req)
-	if err != nil || resp.StatusCode != 200 {
-		var responseError = new(response.ErrorResp)
-		json.NewDecoder(resp.Body).Decode(responseError)
-		defer resp.Body.Close()
-		return nil, responseError, err
+	if err != nil {
+		return nil, err
 	}
 	var result = map[string]int{}
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
 		fmt.Println(err)
-		var responseError = new(response.ErrorResp)
-		json.NewDecoder(resp.Body).Decode(responseError)
-		defer resp.Body.Close()
-		return nil, responseError, err
+		return nil, err
 	}
 	defer resp.Body.Close()
-	return result, nil, nil
+	return result, nil
 }
 
-func (o *OVOID) GetAllNotification() (*response.RespNotifications, *response.ErrorResp, error) {
+//GetAllNotification gets all notification
+func (o *OVOID) GetAllNotification() (*models.RespNotifications, error) {
 	req := &ovo.Request{
 		Method:        "GET",
 		Host:          config.BASE_ENDPOINT,
@@ -254,26 +204,21 @@ func (o *OVOID) GetAllNotification() (*response.RespNotifications, *response.Err
 		Authorization: o.AuthToken,
 	}
 	resp, err := ovo.Post(req)
-	if err != nil || resp.StatusCode != 200 {
-		var responseError = new(response.ErrorResp)
-		json.NewDecoder(resp.Body).Decode(responseError)
-		defer resp.Body.Close()
-		return nil, responseError, err
+	if err != nil {
+		return nil, err
 	}
-	var result = new(response.RespNotifications)
+	var result = new(models.RespNotifications)
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
 		fmt.Println(err)
-		var responseError = new(response.ErrorResp)
-		json.NewDecoder(resp.Body).Decode(responseError)
-		defer resp.Body.Close()
-		return nil, responseError, err
+		return nil, err
 	}
 	defer resp.Body.Close()
-	return result, nil, nil
+	return result, nil
 }
 
-func (o *OVOID) GetRefBank() (*response.RefBank, *response.ErrorResp, error) {
+//GetRefBank Get bank reference
+func (o *OVOID) GetRefBank() (*models.RefBank, error) {
 	req := &ovo.Request{
 		Method:        "GET",
 		Host:          config.BASE_ENDPOINT,
@@ -281,21 +226,15 @@ func (o *OVOID) GetRefBank() (*response.RefBank, *response.ErrorResp, error) {
 		Authorization: o.AuthToken,
 	}
 	resp, err := ovo.Post(req)
-	if err != nil || resp.StatusCode != 200 {
-		var responseError = new(response.ErrorResp)
-		json.NewDecoder(resp.Body).Decode(responseError)
-		defer resp.Body.Close()
-		return nil, responseError, err
+	if err != nil {
+		return nil, err
 	}
-	var result = new(response.RefBank)
+	var result = new(models.RefBank)
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
 		fmt.Println(err)
-		var responseError = new(response.ErrorResp)
-		json.NewDecoder(resp.Body).Decode(responseError)
-		defer resp.Body.Close()
-		return nil, responseError, err
+		return nil, err
 	}
 	defer resp.Body.Close()
-	return result, nil, nil
+	return result, nil
 }

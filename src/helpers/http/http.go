@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"ovoid/src/config"
+	"ovoid/src/models"
 )
 
 type (
@@ -39,9 +40,11 @@ func Post(req *Request) (*http.Response, error) {
 		return nil, err
 	}
 	resp, err := client.Do(request)
-	if err != nil {
+	if err != nil || resp.StatusCode != 200 {
 		fmt.Println(err)
-		return nil, err
+		var responseError = new(models.ErrorResp)
+		json.NewDecoder(resp.Body).Decode(responseError)
+		return nil, responseError
 	}
 
 	return resp, nil
