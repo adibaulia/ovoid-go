@@ -1,4 +1,4 @@
-module ovoid
+module goovo
 
 go 1.13
 

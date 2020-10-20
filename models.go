@@ -1,4 +1,4 @@
-package models
+package goovo
 
 type (
 	Login2FA struct {

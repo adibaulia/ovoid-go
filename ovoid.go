@@ -1,15 +1,24 @@
-package main
+package goovo
 
 import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"ovoid/src/config"
-	ovo "ovoid/src/helpers/http"
-	"ovoid/src/models"
 	"time"
 
 	"github.com/google/uuid"
+)
+
+const (
+	appID        = "C7UMRSMFRZ46D9GW9IK7"
+	appVersion   = "3.2.0"
+	osName       = "Android"
+	osVersion    = "8.1.0"
+	macAddress   = "d8:8e:35:4d:bd:88"
+	baseEndpoint = "api.ovo.id/"
+	aws          = "apigw01.aws.ovo.id/"
+	transferOvo  = "trf_ovo"
+	transferBank = "trf_other_bank"
 )
 
 type (
@@ -34,29 +43,21 @@ type (
 	}
 )
 
-func main() {
-
-	ovoAccount := OVOID{}
-
-	balance, _ := ovoAccount.GetAllBalance()
-	fmt.Printf("%+v", balance)
-}
-
 //Login2FA login using phone number to OVO
-func (l *Login) Login2FA() (*models.Login2FA, error) {
+func (l *Login) Login2FA() (*Login2FA, error) {
 	l.DeviceID = uuid.New().String()
-	req := &ovo.Request{
+	req := &request{
 		Method: "POST",
-		Host:   config.BASE_ENDPOINT,
+		Host:   baseEndpoint,
 		Path:   "v2.0/api/auth/customer/login2FA",
 		Body:   l,
 	}
-	resp, err := ovo.Post(req)
+	resp, err := post(req)
 	defer resp.Body.Close()
 	if err != nil {
 		return nil, err
 	}
-	var result = new(models.Login2FA)
+	var result = new(Login2FA)
 	err = json.NewDecoder(resp.Body).Decode(result)
 	if err != nil {
 		fmt.Println(err)
@@ -66,32 +67,32 @@ func (l *Login) Login2FA() (*models.Login2FA, error) {
 }
 
 //Login2FAVerify is verify OTP sent to phonenumber
-func (l *Login) Login2FAVerify() (*models.AccessToken, error) {
+func (l *Login) Login2FAVerify() (*AccessToken, error) {
 	l = &Login{
 		Mobile:             l.Mobile,
 		RefID:              l.RefID,
 		VerificationCode:   l.VerificationCode,
-		AppVersion:         config.APP_VERSION,
+		AppVersion:         appVersion,
 		DeviceID:           uuid.New().String(),
-		MacAddress:         config.MAC_ADDRESS,
-		OsName:             config.OS_NAME,
-		OsVersion:          config.OS_VERSION,
+		MacAddress:         macAddress,
+		OsName:             osName,
+		OsVersion:          osVersion,
 		PushNotificationID: `FCM|f4OXYs_ZhuM:APA91bGde-ie2YBhmbALKPq94WjYex8gQDU2NMwJn_w9jYZx0emAFRGKHD2NojY6yh8ykpkcciPQpS0CBma-MxTEjaet-5I3T8u_YFWiKgyWoH7pHk7MXChBCBRwGRjMKIPdi3h0p2z7`,
 	}
 
 	log.Print(l.Mobile)
-	req := &ovo.Request{
+	req := &request{
 		Method: "POST",
-		Host:   config.BASE_ENDPOINT,
+		Host:   baseEndpoint,
 		Path:   "v2.0/api/auth/customer/login2FA/verify",
 		Body:   l,
 	}
-	resp, err := ovo.Post(req)
+	resp, err := post(req)
 	defer resp.Body.Close()
 	if err != nil {
 		return nil, err
 	}
-	var result = new(models.AccessToken)
+	var result = new(AccessToken)
 	err = json.NewDecoder(resp.Body).Decode(result)
 	if err != nil {
 		fmt.Println(err)
@@ -101,7 +102,7 @@ func (l *Login) Login2FAVerify() (*models.AccessToken, error) {
 }
 
 //LoginSecurityCode verify login from security pin code and updated access Token
-func (l *Login) LoginSecurityCode() (*models.Auth, error) {
+func (l *Login) LoginSecurityCode() (*Auth, error) {
 	l = &Login{
 		DeviceUnixtime:    time.Now().Unix(),
 		SecurityCode:      l.SecurityCode,
@@ -109,17 +110,17 @@ func (l *Login) LoginSecurityCode() (*models.Auth, error) {
 		Message:           "",
 	}
 
-	req := &ovo.Request{
+	req := &request{
 		Method: "POST",
-		Host:   config.BASE_ENDPOINT,
+		Host:   baseEndpoint,
 		Path:   "v2.0/api/auth/customer/loginSecurityCode/verify",
 		Body:   l,
 	}
-	resp, err := ovo.Post(req)
+	resp, err := post(req)
 	if err != nil {
 		return nil, err
 	}
-	var result = new(models.Auth)
+	var result = new(Auth)
 	err = json.NewDecoder(resp.Body).Decode(result)
 	if err != nil {
 		fmt.Println(err)
@@ -130,18 +131,18 @@ func (l *Login) LoginSecurityCode() (*models.Auth, error) {
 }
 
 //GetAllBalance gets all balance in account
-func (o *OVOID) GetAllBalance() (*models.RespBalance, error) {
-	req := &ovo.Request{
+func (o *OVOID) GetAllBalance() (*RespBalance, error) {
+	req := &request{
 		Method:        "GET",
-		Host:          config.BASE_ENDPOINT,
+		Host:          baseEndpoint,
 		Path:          "v1.0/api/front/",
 		Authorization: o.AuthToken,
 	}
-	resp, err := ovo.Post(req)
+	resp, err := post(req)
 	if err != nil {
 		return nil, err
 	}
-	var result = new(models.RespBalance)
+	var result = new(RespBalance)
 	err = json.NewDecoder(resp.Body).Decode(result)
 	if err != nil {
 		fmt.Println(err)
@@ -152,18 +153,18 @@ func (o *OVOID) GetAllBalance() (*models.RespBalance, error) {
 }
 
 //GetBudget gets all budget in account
-func (o *OVOID) GetBudget() (*models.RespBudget, error) {
-	req := &ovo.Request{
+func (o *OVOID) GetBudget() (*RespBudget, error) {
+	req := &request{
 		Method:        "GET",
-		Host:          config.BASE_ENDPOINT,
+		Host:          baseEndpoint,
 		Path:          "v1.0/budget/detail",
 		Authorization: o.AuthToken,
 	}
-	resp, err := ovo.Post(req)
+	resp, err := post(req)
 	if err != nil {
 		return nil, err
 	}
-	var result = new(models.RespBudget)
+	var result = new(RespBudget)
 	err = json.NewDecoder(resp.Body).Decode(result)
 	if err != nil {
 		fmt.Println(err)
@@ -175,13 +176,13 @@ func (o *OVOID) GetBudget() (*models.RespBudget, error) {
 
 //GetUnreadHistory get notification that unread
 func (o *OVOID) GetUnreadHistory() (map[string]int, error) {
-	req := &ovo.Request{
+	req := &request{
 		Method:        "GET",
-		Host:          config.BASE_ENDPOINT,
+		Host:          baseEndpoint,
 		Path:          "v1.0/notification/status/count/UNREAD",
 		Authorization: o.AuthToken,
 	}
-	resp, err := ovo.Post(req)
+	resp, err := post(req)
 	if err != nil {
 		return nil, err
 	}
@@ -196,18 +197,18 @@ func (o *OVOID) GetUnreadHistory() (map[string]int, error) {
 }
 
 //GetAllNotification gets all notification
-func (o *OVOID) GetAllNotification() (*models.RespNotifications, error) {
-	req := &ovo.Request{
+func (o *OVOID) GetAllNotification() (*RespNotifications, error) {
+	req := &request{
 		Method:        "GET",
-		Host:          config.BASE_ENDPOINT,
+		Host:          baseEndpoint,
 		Path:          "v1.0/notification/status/all",
 		Authorization: o.AuthToken,
 	}
-	resp, err := ovo.Post(req)
+	resp, err := post(req)
 	if err != nil {
 		return nil, err
 	}
-	var result = new(models.RespNotifications)
+	var result = new(RespNotifications)
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
 		fmt.Println(err)
@@ -218,18 +219,18 @@ func (o *OVOID) GetAllNotification() (*models.RespNotifications, error) {
 }
 
 //GetRefBank Get bank reference
-func (o *OVOID) GetRefBank() (*models.RefBank, error) {
-	req := &ovo.Request{
+func (o *OVOID) GetRefBank() (*RefBank, error) {
+	req := &request{
 		Method:        "GET",
-		Host:          config.BASE_ENDPOINT,
+		Host:          baseEndpoint,
 		Path:          "v1.0/reference/master/ref_bank",
 		Authorization: o.AuthToken,
 	}
-	resp, err := ovo.Post(req)
+	resp, err := post(req)
 	if err != nil {
 		return nil, err
 	}
-	var result = new(models.RefBank)
+	var result = new(RefBank)
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
 		fmt.Println(err)
