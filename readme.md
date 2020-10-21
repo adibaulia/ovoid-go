@@ -14,7 +14,7 @@ Anda harus mendapatkan Token untuk menggunakan API Ovo.
 <br>
 <br>
 <b>Langkah 1</b>
-```
+```go
 package main
 
 import (
@@ -36,14 +36,14 @@ func main(){
 
 <b>Langkah 2</b>
 
-```
+```go
   accessToken, err := login.Login2FAVerify(l.RefID, "your_verification_code")
   if err != nil {
     ...
   }
 ```
 <b>Langkah 3</b>
-```
+```go
   auth, err := login.LoginSecurityCode(accessToken.UpdateAccessToken)
   if err != nil {
       ...
@@ -53,7 +53,7 @@ func main(){
 ```
 
 Lalu gunakan YOUR_TOKEN untuk menggunakan package ovoid. Contoh: 
-```
+```go
 package main
 
 import (
