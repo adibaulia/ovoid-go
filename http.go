@@ -1,4 +1,4 @@
-package goovo
+package ovoid
 
 import (
 	"bytes"
@@ -32,6 +32,7 @@ func post(req *request) (*http.Response, error) {
 			},
 		},
 	}
+	req.Host = baseEndpoint
 
 	request, err := http.NewRequest(req.Method, fmt.Sprintf("https://%s%s", req.Host, req.Path), bytes.NewBuffer(body))
 	request.Header.Set("Content-type", "application/json")

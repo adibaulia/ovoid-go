@@ -1,19 +1,7 @@
-package goovo
+package ovoid
 
 type (
-	Login2FA struct {
-		RefID string `json:"refId,omitempty"`
-	}
-
-	AccessToken struct {
-		Mobile            string `json:"mobile,omitempty"`
-		Email             string `json:"email,omitempty"`
-		FullName          string `json:"fullName,omitempty"`
-		IsEmailVerified   bool   `json:"isEmailVerified,omitempty"`
-		IsSecurityCodeSet bool   `json:"isSecurityCodeSet,omitempty"`
-		UpdateAccessToken string `json:"updateAccessToken,omitempty"`
-	}
-
+	//ErrorResp stores responses error from ovo API
 	ErrorResp struct {
 		Message       string `json:"message,omitempty"`
 		Code          int    `json:"code,omitempty"`
@@ -28,18 +16,7 @@ type (
 		} `json:"content,omitempty"`
 	}
 
-	Auth struct {
-		Token              string      `json:"token,omitempty"`
-		TokenSeed          string      `json:"tokenSeed,omitempty"`
-		TimeStamp          int         `json:"timeStamp,omitempty"`
-		TokenSeedExpiredAt int         `json:"tokenSeedExpiredAt,omitempty"`
-		DisplayMessage     interface{} `json:"displayMessage,omitempty"`
-		Email              string      `json:"email,omitempty"`
-		FullName           string      `json:"fullName,omitempty"`
-		IsEmailVerified    bool        `json:"isEmailVerified,omitempty"`
-		IsSecurityCodeSet  bool        `json:"isSecurityCodeSet,omitempty"`
-		UpdateAccessToken  string      `json:"updateAccessToken,omitempty"`
-	}
+	//RespBalance holds response from GetAllBalance
 	RespBalance struct {
 		Balance struct {
 			OvoPoint struct {
@@ -60,6 +37,7 @@ type (
 		} `json:"balance"`
 	}
 
+	//RespBudget holds response from GetAllBudgets()
 	RespBudget struct {
 		Budget struct {
 			Amount   int `json:"amount"`
@@ -74,6 +52,7 @@ type (
 		} `json:"summary"`
 	}
 
+	//RespNotifications holds response from GetAllNotifications()
 	RespNotifications struct {
 		Notifications []struct {
 			ID          string      `json:"id"`
@@ -90,6 +69,7 @@ type (
 		} `json:"notifications"`
 	}
 
+	//RefBank holds response GetRefBank()
 	RefBank struct {
 		BankTypes []struct {
 			ID        int    `json:"id"`
