@@ -20,6 +20,12 @@ jobs:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
 
+      - name: Export OvoToken
+        run: export OVOTOKEN="${{secrets.OVOTOKEN}}"
+
+      - name: Export OvoToken
+        run: echo $OVOTOKEN
+
       - name: Get dependencies
         run: go mod tidy
 
@@ -28,9 +34,6 @@ jobs:
 
       - name: Build
         run: go build -v .
-
-      - name: Export OvoToken
-        run: export OVOTOKEN="${{ secrets.OVOTOKEN }}"
 
       - name: Test
         run: go test -v .
