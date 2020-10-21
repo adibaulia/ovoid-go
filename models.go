@@ -18,23 +18,35 @@ type (
 
 	//RespBalance holds response from GetAllBalance
 	RespBalance struct {
-		Balance struct {
-			OvoPoint struct {
-				CardBalance   float64 `json:"card_balance"`
-				CardNo        string  `json:"card_no"`
-				PaymentMethod string  `json:"payment_method"`
-			} `json:"600"`
-			OvoMain struct {
-				CardBalance   int    `json:"card_balance"`
-				CardNo        string `json:"card_no"`
-				PaymentMethod string `json:"payment_method"`
-			} `json:"000"`
-			OvoCash struct {
-				CardBalance   int    `json:"card_balance"`
-				CardNo        string `json:"card_no"`
-				PaymentMethod string `json:"payment_method"`
-			} `json:"001"`
-		} `json:"balance"`
+		Balance Balance `json:"balance"`
+	}
+
+	//Balance holds balances response
+	Balance struct {
+		OvoPoint OvoPoint `json:"600"`
+		OvoMain  OvoMain  `json:"000"`
+		OvoCash  OvoCash  `json:"001"`
+	}
+
+	//OvoPoint holds balance from ovopoint
+	OvoPoint struct {
+		CardBalance   float64 `json:"card_balance"`
+		CardNo        string  `json:"card_no"`
+		PaymentMethod string  `json:"payment_method"`
+	}
+
+	//OvoMain holds balance from ovomain
+	OvoMain struct {
+		CardBalance   int    `json:"card_balance"`
+		CardNo        string `json:"card_no"`
+		PaymentMethod string `json:"payment_method"`
+	}
+
+	//OvoCash holds balance from ovocash
+	OvoCash struct {
+		CardBalance   int    `json:"card_balance"`
+		CardNo        string `json:"card_no"`
+		PaymentMethod string `json:"payment_method"`
 	}
 
 	//RespBudget holds response from GetAllBudgets()
@@ -81,6 +93,7 @@ type (
 	}
 )
 
+//Error for implement error method from error pkg
 func (e *ErrorResp) Error() string {
 	return ""
 }
