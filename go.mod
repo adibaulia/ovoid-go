@@ -1,4 +1,4 @@
-module ovoid
+module github.com/adibaulia/ovoid-go
 
 go 1.13
 
