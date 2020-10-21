@@ -30,7 +30,7 @@ jobs:
         run: go build -v .
 
       - name: Export OvoToken
-        run: export ${{ secrets.OVOTOKEN }}
+        run: export OVOTOKEN="${{ secrets.OVOTOKEN }}"
 
       - name: Test
         run: go test -v .
