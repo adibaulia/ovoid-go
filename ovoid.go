@@ -6,22 +6,22 @@ import (
 )
 
 type (
-	ovo struct {
+	Ovo struct {
 		AuthToken string `json:"token,omitempty"`
 	}
 )
 
 //NewClient creates new instance ovo struct inside for authToken
-func NewClient(authToken string) (*ovo, error) {
+func NewClient(authToken string) (*Ovo, error) {
 	if authToken == "" {
 		return nil, fmt.Errorf("authToken required")
 	}
 
-	return &ovo{AuthToken: authToken}, nil
+	return &Ovo{AuthToken: authToken}, nil
 }
 
 //GetAllBalance gets all balance in account
-func (o *ovo) GetAllBalance() (*RespBalance, error) {
+func (o *Ovo) GetAllBalance() (*RespBalance, error) {
 	req := &request{
 		Method:        "GET",
 		Path:          "v1.0/api/front/",
@@ -42,7 +42,7 @@ func (o *ovo) GetAllBalance() (*RespBalance, error) {
 }
 
 //GetBudget gets all budget in account
-func (o *ovo) GetBudget() (*RespBudget, error) {
+func (o *Ovo) GetBudget() (*RespBudget, error) {
 	req := &request{
 		Method:        "GET",
 		Path:          "v1.0/budget/detail",
@@ -63,7 +63,7 @@ func (o *ovo) GetBudget() (*RespBudget, error) {
 }
 
 //GetUnreadHistory get notification that unread
-func (o *ovo) GetUnreadHistory() (map[string]int, error) {
+func (o *Ovo) GetUnreadHistory() (map[string]int, error) {
 	req := &request{
 		Method:        "GET",
 		Path:          "v1.0/notification/status/count/UNREAD",
@@ -84,7 +84,7 @@ func (o *ovo) GetUnreadHistory() (map[string]int, error) {
 }
 
 //GetAllNotification gets all notification
-func (o *ovo) GetAllNotification() (*RespNotifications, error) {
+func (o *Ovo) GetAllNotification() (*RespNotifications, error) {
 	req := &request{
 		Method:        "GET",
 		Path:          "v1.0/notification/status/all",
@@ -105,7 +105,7 @@ func (o *ovo) GetAllNotification() (*RespNotifications, error) {
 }
 
 //GetRefBank Get bank reference
-func (o *ovo) GetRefBank() (*RefBank, error) {
+func (o *Ovo) GetRefBank() (*RefBank, error) {
 	req := &request{
 		Method:        "GET",
 		Path:          "v1.0/reference/master/ref_bank",

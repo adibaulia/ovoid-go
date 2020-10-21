@@ -1,5 +1,5 @@
 ## <center>Un-Official ovoid API Wrapper for Go</center>
-Repository berikut ini merupakan porting dari [ovoid](https://github.com/lintangtimur/ovoid /) untuk Go 
+Repository berikut ini merupakan porting dari [ovoid](https://github.com/lintangtimur/ovoid) untuk Go 
 
 
 ### Usage
