@@ -6,6 +6,8 @@ import (
 )
 
 type (
+
+	//Ovo holds struct token and hold methods
 	Ovo struct {
 		AuthToken string `json:"token,omitempty"`
 	}
@@ -20,8 +22,8 @@ func NewClient(authToken string) (*Ovo, error) {
 	return &Ovo{AuthToken: authToken}, nil
 }
 
-//GetAllBalance gets all balance in account
-func (o *Ovo) GetAllBalance() (*RespBalance, error) {
+//GetAllBalances gets all balances in account
+func (o *Ovo) GetAllBalances() (*RespBalance, error) {
 	req := &request{
 		Method:        "GET",
 		Path:          "v1.0/api/front/",
@@ -34,15 +36,14 @@ func (o *Ovo) GetAllBalance() (*RespBalance, error) {
 	var result = new(RespBalance)
 	err = json.NewDecoder(resp.Body).Decode(result)
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 	defer resp.Body.Close()
 	return result, nil
 }
 
-//GetBudget gets all budget in account
-func (o *Ovo) GetBudget() (*RespBudget, error) {
+//GetBudgets gets all budget in account
+func (o *Ovo) GetBudgets() (*RespBudget, error) {
 	req := &request{
 		Method:        "GET",
 		Path:          "v1.0/budget/detail",
@@ -55,15 +56,15 @@ func (o *Ovo) GetBudget() (*RespBudget, error) {
 	var result = new(RespBudget)
 	err = json.NewDecoder(resp.Body).Decode(result)
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 	defer resp.Body.Close()
 	return result, nil
 }
 
-//GetUnreadHistory get notification that unread
-func (o *Ovo) GetUnreadHistory() (map[string]int, error) {
+//GetCountUnreadNotifications get count number of notification that unread
+//will return pointer of int because the number can be zero
+func (o *Ovo) GetCountUnreadNotifications() (*int, error) {
 	req := &request{
 		Method:        "GET",
 		Path:          "v1.0/notification/status/count/UNREAD",
@@ -76,15 +77,15 @@ func (o *Ovo) GetUnreadHistory() (map[string]int, error) {
 	var result = map[string]int{}
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 	defer resp.Body.Close()
-	return result, nil
+	res := result["Total"]
+	return &res, nil
 }
 
-//GetAllNotification gets all notification
-func (o *Ovo) GetAllNotification() (*RespNotifications, error) {
+//GetAllNotifications gets all notifications
+func (o *Ovo) GetAllNotifications() ([]Notifications, error) {
 	req := &request{
 		Method:        "GET",
 		Path:          "v1.0/notification/status/all",
@@ -94,17 +95,27 @@ func (o *Ovo) GetAllNotification() (*RespNotifications, error) {
 	if err != nil {
 		return nil, err
 	}
-	var result = new(RespNotifications)
-	err = json.NewDecoder(resp.Body).Decode(&result)
+	var res map[string]interface{}
+	var response []Notifications
+	err = json.NewDecoder(resp.Body).Decode(&res)
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 	defer resp.Body.Close()
-	return result, nil
+
+	b, err := json.Marshal(res["notifications"])
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal(b, &response)
+	if err != nil {
+		return nil, err
+	}
+
+	return response, nil
 }
 
-//GetRefBank Get bank reference
+//GetRefBank Get bank referenceID
 func (o *Ovo) GetRefBank() (*RefBank, error) {
 	req := &request{
 		Method:        "GET",
@@ -118,7 +129,6 @@ func (o *Ovo) GetRefBank() (*RefBank, error) {
 	var result = new(RefBank)
 	err = json.NewDecoder(resp.Body).Decode(&result)
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 	defer resp.Body.Close()

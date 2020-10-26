@@ -33,10 +33,36 @@ func TestGetAllBalance(t *testing.T) {
 		panic(err)
 	}
 
-	b, err := ovo.GetAllBalance()
+	b, err := ovo.GetAllBalances()
 	if err != nil {
 		panic(err)
 	}
 
 	assert.Equal(t, expectedBalanceResponse, *b, "balance not the same as expected")
+}
+
+func TestGetAllNotification(t *testing.T) {
+	ovo, err := NewClient(os.Getenv("OVOTOKEN"))
+	if err != nil {
+		panic(err)
+	}
+
+	b, err := ovo.GetAllNotifications()
+	if err != nil {
+		panic(err)
+	}
+	assert.Equal(t, 4, len(b), "notification error")
+}
+
+func TestGetCountUnreadNotification(t *testing.T) {
+	ovo, err := NewClient(os.Getenv("OVOTOKEN"))
+	if err != nil {
+		panic(err)
+	}
+
+	b, err := ovo.GetCountUnreadNotifications()
+	if err != nil {
+		panic(err)
+	}
+	assert.Equal(t, 4, *b, "total not same with the expected")
 }
