@@ -1,20 +1,6 @@
 package ovoid
 
 type (
-	//ErrorResp stores responses error from ovo API
-	ErrorResp struct {
-		Message       string `json:"message,omitempty"`
-		Code          int    `json:"code,omitempty"`
-		URL           string `json:"url,omitempty"`
-		Method        string `json:"method,omitempty"`
-		RemoteAddress string `json:"remoteAddress,omitempty"`
-		Unixtime      int    `json:"unixtime,omitempty"`
-		Retry         int    `json:"retry,omitempty"`
-		Timestamp     int    `json:"timestamp,omitempty"`
-		Content       struct {
-			Present bool `json:"present,omitempty"`
-		} `json:"content,omitempty"`
-	}
 
 	//RespBalance holds response from GetAllBalance
 	RespBalance struct {
@@ -64,21 +50,19 @@ type (
 		} `json:"summary"`
 	}
 
-	//RespNotifications holds response from GetAllNotifications()
-	RespNotifications struct {
-		Notifications []struct {
-			ID          string      `json:"id"`
-			ChannelType string      `json:"channelType"`
-			MessageType string      `json:"messageType"`
-			Subject     interface{} `json:"subject"`
-			Message     string      `json:"message"`
-			DateCreated string      `json:"dateCreated"`
-			Status      string      `json:"status"`
-			Receiver    struct {
-				ID   string `json:"id"`
-				Type string `json:"type"`
-			} `json:"receiver"`
-		} `json:"notifications"`
+	//Notifications holds response from GetAllNotifications()
+	Notifications struct {
+		ID          string      `json:"id"`
+		ChannelType string      `json:"channelType"`
+		MessageType string      `json:"messageType"`
+		Subject     interface{} `json:"subject"`
+		Message     string      `json:"message"`
+		DateCreated string      `json:"dateCreated"`
+		Status      string      `json:"status"`
+		Receiver    struct {
+			ID   string `json:"id"`
+			Type string `json:"type"`
+		} `json:"receiver"`
 	}
 
 	//RefBank holds response GetRefBank()
@@ -92,8 +76,3 @@ type (
 		BankTypeDefault interface{} `json:"bankTypeDefault"`
 	}
 )
-
-//Error for implement error method from error pkg
-func (e *ErrorResp) Error() string {
-	return ""
-}

@@ -82,7 +82,6 @@ func (l *Login) Login2FA() (*Login2FA, error) {
 	var result = new(Login2FA)
 	err = json.NewDecoder(resp.Body).Decode(result)
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 	return result, nil
@@ -125,7 +124,6 @@ func (l *Login) Login2FAVerify(refID, verificationCode string) (*AccessToken, er
 	var result = new(AccessToken)
 	err = json.NewDecoder(resp.Body).Decode(result)
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
 	return result, nil
@@ -152,7 +150,6 @@ func (l *Login) LoginSecurityCode(updateAccessToken string) (*Auth, error) {
 	var result = new(Auth)
 	err = json.NewDecoder(resp.Body).Decode(result)
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
 	defer resp.Body.Close()
