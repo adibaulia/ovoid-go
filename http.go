@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 )
 
 type (
@@ -28,6 +29,7 @@ type (
 		Path          string
 		Authorization string
 		Method        string
+		Timeout       time.Duration
 		Body          interface{}
 	}
 )
@@ -44,6 +46,7 @@ func post(req *request) (*http.Response, error) {
 	}
 
 	client := &http.Client{
+		Timeout: req.Timeout,
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{
 				InsecureSkipVerify: true,

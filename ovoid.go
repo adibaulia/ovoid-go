@@ -3,6 +3,7 @@ package ovoid
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 )
 
 type (
@@ -10,16 +11,17 @@ type (
 	//Ovo holds struct token and hold methods
 	Ovo struct {
 		AuthToken string `json:"token,omitempty"`
+		Timeout   time.Duration
 	}
 )
 
 //NewClient creates new instance ovo struct inside for authToken
-func NewClient(authToken string) (*Ovo, error) {
+func NewClient(authToken string, timeout time.Duration) (*Ovo, error) {
 	if authToken == "" {
 		return nil, fmt.Errorf("authToken required")
 	}
 
-	return &Ovo{AuthToken: authToken}, nil
+	return &Ovo{AuthToken: authToken, Timeout: timeout}, nil
 }
 
 //GetAllBalances gets all balances in account
@@ -28,6 +30,7 @@ func (o *Ovo) GetAllBalances() (*RespBalance, error) {
 		Method:        "GET",
 		Path:          "v1.0/api/front/",
 		Authorization: o.AuthToken,
+		Timeout:       o.Timeout,
 	}
 	resp, err := post(req)
 	if err != nil {
@@ -48,6 +51,7 @@ func (o *Ovo) GetBudgets() (*RespBudget, error) {
 		Method:        "GET",
 		Path:          "v1.0/budget/detail",
 		Authorization: o.AuthToken,
+		Timeout:       o.Timeout,
 	}
 	resp, err := post(req)
 	if err != nil {
@@ -69,6 +73,7 @@ func (o *Ovo) GetCountUnreadNotifications() (*int, error) {
 		Method:        "GET",
 		Path:          "v1.0/notification/status/count/UNREAD",
 		Authorization: o.AuthToken,
+		Timeout:       o.Timeout,
 	}
 	resp, err := post(req)
 	if err != nil {
@@ -90,6 +95,7 @@ func (o *Ovo) GetAllNotifications() ([]Notifications, error) {
 		Method:        "GET",
 		Path:          "v1.0/notification/status/all",
 		Authorization: o.AuthToken,
+		Timeout:       o.Timeout,
 	}
 	resp, err := post(req)
 	if err != nil {
@@ -121,6 +127,7 @@ func (o *Ovo) GetRefBank() (*RefBank, error) {
 		Method:        "GET",
 		Path:          "v1.0/reference/master/ref_bank",
 		Authorization: o.AuthToken,
+		Timeout:       o.Timeout,
 	}
 	resp, err := post(req)
 	if err != nil {
