@@ -51,7 +51,7 @@ func TestGetAllNotification(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	assert.Equal(t, 4, len(b), "notification error")
+	assert.Equal(t, 0, len(b), "notification error")
 }
 
 func TestGetCountUnreadNotification(t *testing.T) {
@@ -64,5 +64,5 @@ func TestGetCountUnreadNotification(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	assert.Equal(t, 4, *b, "total not same with the expected")
+	assert.Equal(t, 0, *b, "total not same with the expected")
 }
