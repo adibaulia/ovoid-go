@@ -1,6 +1,7 @@
 package ovoid
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"time"
@@ -25,14 +26,14 @@ func NewClient(authToken string, timeout time.Duration) (*Ovo, error) {
 }
 
 //GetAllBalances gets all balances in account
-func (o *Ovo) GetAllBalances() (*RespBalance, error) {
+func (o *Ovo) GetAllBalances(ctx context.Context) (*RespBalance, error) {
 	req := &request{
 		Method:        "GET",
 		Path:          "v1.0/api/front/",
 		Authorization: o.AuthToken,
 		Timeout:       o.Timeout,
 	}
-	resp, err := post(req)
+	resp, err := post(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -46,14 +47,14 @@ func (o *Ovo) GetAllBalances() (*RespBalance, error) {
 }
 
 //GetBudgets gets all budget in account
-func (o *Ovo) GetBudgets() (*RespBudget, error) {
+func (o *Ovo) GetBudgets(ctx context.Context) (*RespBudget, error) {
 	req := &request{
 		Method:        "GET",
 		Path:          "v1.0/budget/detail",
 		Authorization: o.AuthToken,
 		Timeout:       o.Timeout,
 	}
-	resp, err := post(req)
+	resp, err := post(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -68,14 +69,14 @@ func (o *Ovo) GetBudgets() (*RespBudget, error) {
 
 //GetCountUnreadNotifications get count number of notification that unread
 //will return pointer of int because the number can be zero
-func (o *Ovo) GetCountUnreadNotifications() (*int, error) {
+func (o *Ovo) GetCountUnreadNotifications(ctx context.Context) (*int, error) {
 	req := &request{
 		Method:        "GET",
 		Path:          "v1.0/notification/status/count/UNREAD",
 		Authorization: o.AuthToken,
 		Timeout:       o.Timeout,
 	}
-	resp, err := post(req)
+	resp, err := post(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -90,14 +91,14 @@ func (o *Ovo) GetCountUnreadNotifications() (*int, error) {
 }
 
 //GetAllNotifications gets all notifications
-func (o *Ovo) GetAllNotifications() ([]Notifications, error) {
+func (o *Ovo) GetAllNotifications(ctx context.Context) ([]Notifications, error) {
 	req := &request{
 		Method:        "GET",
 		Path:          "v1.0/notification/status/all",
 		Authorization: o.AuthToken,
 		Timeout:       o.Timeout,
 	}
-	resp, err := post(req)
+	resp, err := post(ctx, req)
 	if err != nil {
 		return nil, err
 	}
@@ -122,14 +123,14 @@ func (o *Ovo) GetAllNotifications() ([]Notifications, error) {
 }
 
 //GetRefBank Get bank referenceID
-func (o *Ovo) GetRefBank() (*RefBank, error) {
+func (o *Ovo) GetRefBank(ctx context.Context) (*RefBank, error) {
 	req := &request{
 		Method:        "GET",
 		Path:          "v1.0/reference/master/ref_bank",
 		Authorization: o.AuthToken,
 		Timeout:       o.Timeout,
 	}
-	resp, err := post(req)
+	resp, err := post(ctx, req)
 	if err != nil {
 		return nil, err
 	}

@@ -1,6 +1,7 @@
 package ovoid
 
 import (
+	"context"
 	"os"
 	"testing"
 	"time"
@@ -34,7 +35,7 @@ func TestGetAllBalance(t *testing.T) {
 		panic(err)
 	}
 
-	b, err := ovo.GetAllBalances()
+	b, err := ovo.GetAllBalances(context.Background())
 	if err != nil {
 		panic(err)
 	}
@@ -48,7 +49,7 @@ func TestGetAllNotification(t *testing.T) {
 		panic(err)
 	}
 
-	b, err := ovo.GetAllNotifications()
+	b, err := ovo.GetAllNotifications(context.Background())
 	if err != nil {
 		panic(err)
 	}
@@ -61,7 +62,7 @@ func TestGetCountUnreadNotification(t *testing.T) {
 		panic(err)
 	}
 
-	b, err := ovo.GetCountUnreadNotifications()
+	b, err := ovo.GetCountUnreadNotifications(context.Background())
 	if err != nil {
 		panic(err)
 	}
@@ -74,7 +75,7 @@ func TestTimeout(t *testing.T) {
 		panic(err)
 	}
 
-	b, err := ovo.GetAllBalances()
+	b, err := ovo.GetAllBalances(context.Background())
 	if err == nil {
 		assert.Equal(t, expectedBalanceResponse, *b, "balance not the same as expected")
 	}
