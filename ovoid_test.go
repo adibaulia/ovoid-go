@@ -4,7 +4,6 @@ import (
 	"context"
 	"os"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -67,18 +66,4 @@ func TestGetCountUnreadNotification(t *testing.T) {
 		panic(err)
 	}
 	assert.Equal(t, 0, *b, "total not same with the expected")
-}
-
-func TestTimeout(t *testing.T) {
-	ovo, err := NewClient(os.Getenv("OVOTOKEN"), 1*time.Millisecond)
-	if err != nil {
-		panic(err)
-	}
-
-	b, err := ovo.GetAllBalances(context.Background())
-	if err == nil {
-		assert.Equal(t, expectedBalanceResponse, *b, "balance not the same as expected")
-	}
-	assert.Equal(t, expectedBalanceResponse, *b, "balance not the same as expected")
-	panic(err)
 }
