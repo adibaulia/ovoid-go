@@ -2,10 +2,12 @@ package ovoid
 
 import (
 	"bytes"
+	"context"
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 )
 
 type (
@@ -28,6 +30,7 @@ type (
 		Path          string
 		Authorization string
 		Method        string
+		Timeout       time.Duration
 		Body          interface{}
 	}
 )
@@ -37,13 +40,14 @@ func (e *ErrorResp) Error() string {
 	return ""
 }
 
-func post(req *request) (*http.Response, error) {
+func post(ctx context.Context, req *request) (*http.Response, error) {
 	body, err := json.Marshal(req.Body)
 	if err != nil {
 		return nil, fmt.Errorf("error when marshalling body:%v", err)
 	}
 
 	client := &http.Client{
+		Timeout: req.Timeout,
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{
 				InsecureSkipVerify: true,
@@ -63,6 +67,8 @@ func post(req *request) (*http.Response, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error when creating new request:%v", err)
 	}
+
+	request.WithContext(ctx)
 
 	resp, err := client.Do(request)
 	if err != nil || resp.StatusCode != 200 {

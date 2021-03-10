@@ -1,6 +1,7 @@
 package ovoid
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -68,13 +69,13 @@ func NewOvoLogin(phone string) (*Login, error) {
 }
 
 //Login2FA login using phone number to OVO
-func (l *Login) Login2FA() (*Login2FA, error) {
+func (l *Login) Login2FA(ctx context.Context) (*Login2FA, error) {
 	req := &request{
 		Method: "POST",
 		Path:   "v2.0/api/auth/customer/login2FA",
 		Body:   l,
 	}
-	resp, err := post(req)
+	resp, err := post(ctx, req)
 	defer resp.Body.Close()
 	if err != nil {
 		return nil, err
@@ -88,7 +89,7 @@ func (l *Login) Login2FA() (*Login2FA, error) {
 }
 
 //Login2FAVerify is verify OTP sent to phonenumber
-func (l *Login) Login2FAVerify(refID, verificationCode string) (*AccessToken, error) {
+func (l *Login) Login2FAVerify(ctx context.Context, refID, verificationCode string) (*AccessToken, error) {
 
 	if refID == "" {
 		return nil, fmt.Errorf("refID required")
@@ -116,7 +117,7 @@ func (l *Login) Login2FAVerify(refID, verificationCode string) (*AccessToken, er
 		Path:   "v2.0/api/auth/customer/login2FA/verify",
 		Body:   l,
 	}
-	resp, err := post(req)
+	resp, err := post(ctx, req)
 	defer resp.Body.Close()
 	if err != nil {
 		return nil, err
@@ -130,7 +131,7 @@ func (l *Login) Login2FAVerify(refID, verificationCode string) (*AccessToken, er
 }
 
 //LoginSecurityCode verify login from security pin code and updated access Token
-func (l *Login) LoginSecurityCode(updateAccessToken string) (*Auth, error) {
+func (l *Login) LoginSecurityCode(ctx context.Context, updateAccessToken string) (*Auth, error) {
 	l = &Login{
 		DeviceUnixtime:    time.Now().Unix(),
 		SecurityCode:      l.SecurityCode,
@@ -143,7 +144,7 @@ func (l *Login) LoginSecurityCode(updateAccessToken string) (*Auth, error) {
 		Path:   "v2.0/api/auth/customer/loginSecurityCode/verify",
 		Body:   l,
 	}
-	resp, err := post(req)
+	resp, err := post(ctx, req)
 	if err != nil {
 		return nil, err
 	}

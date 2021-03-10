@@ -1,8 +1,10 @@
 package ovoid
 
 import (
+	"context"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -28,12 +30,12 @@ var expectedBalanceResponse RespBalance = RespBalance{
 }
 
 func TestGetAllBalance(t *testing.T) {
-	ovo, err := NewClient(os.Getenv("OVOTOKEN"))
+	ovo, err := NewClient(os.Getenv("OVOTOKEN"), 0)
 	if err != nil {
 		panic(err)
 	}
 
-	b, err := ovo.GetAllBalances()
+	b, err := ovo.GetAllBalances(context.Background())
 	if err != nil {
 		panic(err)
 	}
@@ -42,12 +44,12 @@ func TestGetAllBalance(t *testing.T) {
 }
 
 func TestGetAllNotification(t *testing.T) {
-	ovo, err := NewClient(os.Getenv("OVOTOKEN"))
+	ovo, err := NewClient(os.Getenv("OVOTOKEN"), 0)
 	if err != nil {
 		panic(err)
 	}
 
-	b, err := ovo.GetAllNotifications()
+	b, err := ovo.GetAllNotifications(context.Background())
 	if err != nil {
 		panic(err)
 	}
@@ -55,14 +57,28 @@ func TestGetAllNotification(t *testing.T) {
 }
 
 func TestGetCountUnreadNotification(t *testing.T) {
-	ovo, err := NewClient(os.Getenv("OVOTOKEN"))
+	ovo, err := NewClient(os.Getenv("OVOTOKEN"), 0)
 	if err != nil {
 		panic(err)
 	}
 
-	b, err := ovo.GetCountUnreadNotifications()
+	b, err := ovo.GetCountUnreadNotifications(context.Background())
 	if err != nil {
 		panic(err)
 	}
 	assert.Equal(t, 0, *b, "total not same with the expected")
+}
+
+func TestTimeout(t *testing.T) {
+	ovo, err := NewClient(os.Getenv("OVOTOKEN"), 1*time.Millisecond)
+	if err != nil {
+		panic(err)
+	}
+
+	b, err := ovo.GetAllBalances(context.Background())
+	if err == nil {
+		assert.Equal(t, expectedBalanceResponse, *b, "balance not the same as expected")
+	}
+	assert.Equal(t, expectedBalanceResponse, *b, "balance not the same as expected")
+	panic(err)
 }
