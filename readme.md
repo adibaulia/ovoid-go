@@ -1,5 +1,5 @@
 ## <center> Un-Official Ovoid API Wrapper package for Go
-[![Documentation](https://godoc.org/github.com/adibaulia/ovoid-go?status.svg)](http://godoc.org/github.com/adibaulia/ovoid-go) [![Test-master Actions Status](https://github.com/adibaulia/ovoid-go/workflows/Test/badge.svg)](https://github.com/adibaulia/ovoid-go/actions)
+[![Documentation](https://godoc.org/github.com/adibaulia/ovoid-go?status.svg)](http://godoc.org/github.com/adibaulia/ovoid-go) [![Test-master Actions Status](https://github.com/adibaulia/ovoid-go/workflows/Test/badge.svg)](https://github.com/adibaulia/ovoid-go/actions) [![Go Report Card](https://goreportcard.com/badge/github.com/adibaulia/ovoid-go)](https://goreportcard.com/report/github.com/adibaulia/ovoid-go) [![Ask Me Anything !](https://img.shields.io/badge/Ask%20me-anything-1abc9c.svg)](https://gitHub.com/adibaulia) [![made-with-Go](https://img.shields.io/badge/Made%20with-Go-1f425f.svg)](http://golang.org) 
 </center>
 
 Repository berikut ini merupakan porting dari [ovoid](https://github.com/lintangtimur/ovoid) untuk Go 
